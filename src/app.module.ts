@@ -7,18 +7,21 @@ import {
   VoteEntity,
   VoterEntity,
   ElectionEntity
-} from './entities'
+} from './entities';
 
 import {
   CandidateService,
   ElectionService,
   VoteService,
   VoterService
-} from './services'
-import { CandidateController } from './controllers/candidate/candidate.controller';
-import { VoterController } from './controllers/voter/voter.controller';
-import { VoteController } from './controllers/vote/vote.controller';
-import { ElectionController } from './controllers/election/election.controller';
+} from './services';
+
+import {
+  CandidateController,
+  ElectionController,
+  VoteController,
+  VoterController
+} from './controllers';
 
 
 @Module({
@@ -30,13 +33,13 @@ import { ElectionController } from './controllers/election/election.controller';
     }),
 
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      // imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get('database.host'),
         port: configService.get<number>('database.port'),
-        username: configService.get('databse.username'),
+        username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
         entities: [CandidateEntity, VoteEntity, VoterEntity, ElectionEntity],

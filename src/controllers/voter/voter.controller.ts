@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Param, Put, Query, Response } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Query, Response, UseFilters } from '@nestjs/common';
 import { ApiTags, ApiBody, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { VoterDto } from '../../dtos/voter/voter.dto';
 import { GeneralResponse } from '../../dtos/responses/response';
 import { VoterService } from '../../services/voter/voter.service';
 import { VoterEntity } from 'src/entities';
-import { type } from 'os';
+import { CustomHttpExceptionFilter } from 'src/exceptions/exception-filters/custom-http-exception.filter';
+import { AllExceptionsFilter } from 'src/exceptions/exception-filters/all-custom-execption-filters';
 
 
 @Controller('voter')
@@ -29,8 +30,12 @@ export class VoterController {
 
     @Get()
     @ApiParam({ name: 'id' })
-    async findOneVoter(@Param() id: number) {
-        return this.voterService.findOne(id)
+    @UseFilters(AllExceptionsFilter, CustomHttpExceptionFilter)
+    async findOneVoter(@Param() id: number): Promise<GeneralResponse<VoterEntity>> {
+        let voter: VoterEntity = await this.voterService.findOne(id);
+
+        let gen: GeneralResponse<VoterEntity> = new GeneralResponse(200, "Voter Found", voter)
+        return gen;
     }
 
     @Get('/all')

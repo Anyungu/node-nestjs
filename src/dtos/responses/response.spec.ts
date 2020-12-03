@@ -1,7 +1,7 @@
-import { Response } from './response';
+import { GeneralResponse } from './response';
 
-describe('Response', () => {
+describe('GeneralResponse', () => {
   it('should be defined', () => {
-    expect(new Response()).toBeDefined();
+    expect(new GeneralResponse(200, "lol", "lol")).toBeDefined();
   });
 });
