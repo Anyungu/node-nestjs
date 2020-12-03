@@ -63,8 +63,9 @@ export class VoterService {
      */
     async update(id: number, voter: VoterDto): Promise<void> {
         let updatedVoter: UpdateResult = await this.votersRepository.update({ id: id }, { ...voter });
-        if (!updatedVoter) {
-            throw new CustomException(501, "Voter Not Found")
-        } 
+        console.log(updatedVoter.affected)
+        if (updatedVoter.affected < 1) {
+            throw new CustomException(501, "Voter Details unchanged")
+        }
     }
 }
