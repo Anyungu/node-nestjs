@@ -1,6 +1,5 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GeneralResponse } from 'src/dtos/responses/response';
 import { VoterDto } from 'src/dtos/voter/voter.dto';
 import { CustomException } from 'src/exceptions/exceptions/custom.exception';
 import { Repository } from 'typeorm';
@@ -18,37 +17,36 @@ export class VoterService {
 
     async findAll(): Promise<VoterEntity[]> {
         let voters: VoterEntity[] = await this.votersRepository.find();
-
-        if (voters.length < 1) {
-            throw new CustomException(401, "Voter Not Found")
-        }
-
         return voters;
     }
 
+    /**
+     * 
+     * @param id 
+     */
     async findOne(id: number): Promise<VoterEntity> {
-
         let voter: VoterEntity = await this.votersRepository.findOne(id);
 
         if (voter) {
-
             return voter
-
         } else {
-
             throw new CustomException(401, "Voter Not Found")
-
         }
-
-
     }
 
+    /**
+     * 
+     * @param id 
+     */
     async remove(id: string): Promise<void> {
         await this.votersRepository.delete(id);
     }
 
+    /**
+     * 
+     * @param voter 
+     */
     async create(voter: VoterDto): Promise<VoterEntity> {
-
         let voterInstance: VoterEntity = this.votersRepository.create({
             email: voter.email,
             location: voter.location
@@ -58,10 +56,12 @@ export class VoterService {
         return newVoter;
     }
 
+    /**
+     * 
+     * @param id 
+     * @param voter 
+     */
     async update(id: number, voter: VoterDto): Promise<void> {
-
-        let updatedVoter: VoterEntity = await this.votersRepository.update({ id: id }, { ...voter });
-
-
+        
     }
 }
