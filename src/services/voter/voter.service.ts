@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VoterDto } from 'src/dtos/voter/voter.dto';
 import { CustomException } from 'src/exceptions/exceptions/custom.exception';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { VoterEntity } from '../../entities/voter/voter.entity';
 
 
@@ -62,6 +62,9 @@ export class VoterService {
      * @param voter 
      */
     async update(id: number, voter: VoterDto): Promise<void> {
-        
+        let updatedVoter: UpdateResult = await this.votersRepository.update({ id: id }, { ...voter });
+        if (!updatedVoter) {
+            throw new CustomException(501, "Voter Not Found")
+        } 
     }
 }
