@@ -10,6 +10,7 @@ import { AllExceptionsFilter } from 'src/exceptions/exception-filters/all-custom
 
 @Controller('voter')
 @ApiTags('voter')
+@UseFilters(AllExceptionsFilter, CustomHttpExceptionFilter)
 export class VoterController {
 
     constructor(private voterService: VoterService) { }
@@ -21,26 +22,36 @@ export class VoterController {
     })
     async createVoter(@Body() voterDto: VoterDto) {
         let data: VoterEntity = await this.voterService.create(voterDto);
-
-        let gen: GeneralResponse<VoterEntity> = new GeneralResponse(200, 'Success', data);
+        let gen: GeneralResponse<VoterEntity> = <GeneralResponse<VoterEntity>>{
+            status: 200,
+            message: 'success',
+            data
+        }
         return gen;
-
     }
 
 
     @Get()
     @ApiParam({ name: 'id' })
-    @UseFilters(AllExceptionsFilter, CustomHttpExceptionFilter)
     async findOneVoter(@Param() id: number): Promise<GeneralResponse<VoterEntity>> {
         let voter: VoterEntity = await this.voterService.findOne(id);
-
-        let gen: GeneralResponse<VoterEntity> = new GeneralResponse(200, "Voter Found", voter)
+        let gen: GeneralResponse<VoterEntity> = <GeneralResponse<VoterEntity>>{
+            status: 200,
+            message: 'Voter Found',
+            data: voter
+        }
         return gen;
     }
 
     @Get('/all')
     async findAllVoters() {
-        return this.voterService.findAll()
+        let voters: VoterEntity[] = await this.voterService.findAll()
+        let gen: GeneralResponse<VoterEntity[]> = <GeneralResponse<VoterEntity[]>>{
+            status: 200,
+            message: 'Voter Found',
+            data: voters
+        }
+        return gen;
     }
 
     @Put()
@@ -49,9 +60,13 @@ export class VoterController {
         type: VoterDto
     })
     async updateVoter(@Query() id: number, @Body() voterDto: VoterDto) {
-
-        return this.updateVoter(id, voterDto);
-
+        await this.voterService.update(id, voterDto)
+        let gen: GeneralResponse<VoterEntity[]> = <GeneralResponse<VoterEntity[]>>{
+            status: 200,
+            message: 'Voter Updated',
+            data: {}
+        }
+        return gen;
     }
 
 }
