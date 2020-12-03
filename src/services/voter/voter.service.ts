@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GeneralResponse } from 'src/dtos/responses/response';
 import { VoterDto } from 'src/dtos/voter/voter.dto';
 import { CustomException } from 'src/exceptions/exceptions/custom.exception';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { VoterEntity } from '../../entities/voter/voter.entity';
 
 
@@ -60,8 +60,9 @@ export class VoterService {
 
     async update(id: number, voter: VoterDto): Promise<void> {
 
-        let updatedVoter: VoterEntity = await this.votersRepository.update({ id: id }, { ...voter });
+        let updatedVoter: UpdateResult = await this.votersRepository.update({ id: id }, { ...voter });
 
+        console.log(updatedVoter.raw);
 
     }
 }
