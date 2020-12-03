@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Put, Query, Response } from '@nestjs/common';
-import { ApiTags, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { VoterDto } from '../../dtos/voter/voter.dto';
 import { GeneralResponse } from '../../dtos/responses/response';
 import { VoterService } from '../../services/voter/voter.service';
@@ -15,11 +15,8 @@ export class VoterController {
 
 
     @Post()
-    @ApiResponse(
-       {
-        // status: 200,
-        // description: 'The found record',
-        schema: {status: 200, },
+    @ApiBody({
+        type: VoterDto
     })
     async createVoter(@Body() voterDto: VoterDto) {
         let data: VoterEntity = await this.voterService.create(voterDto);
@@ -31,6 +28,7 @@ export class VoterController {
 
 
     @Get()
+    @ApiParam({ name: 'id' })
     async findOneVoter(@Param() id: number) {
         return this.voterService.findOne(id)
     }
@@ -41,6 +39,10 @@ export class VoterController {
     }
 
     @Put()
+    @ApiQuery({ name: 'id' })
+    @ApiBody({
+        type: VoterDto
+    })
     async updateVoter(@Query() id: number, @Body() voterDto: VoterDto) {
 
         return this.updateVoter(id, voterDto);

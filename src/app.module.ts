@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
 import {
   CandidateEntity,
   VoteEntity,
@@ -23,19 +23,33 @@ import { ElectionController } from './controllers/election/election.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'database-node-nest.cxpbiuteo4h6.us-east-2.rds.amazonaws.com',
-      port: 3306,
-      username: 'admin',
-      password: 'babyshark123',
-      database: 'voter_nest_db',
-      entities: [CandidateEntity, VoteEntity, VoterEntity, ElectionEntity],
-      synchronize: true,
+
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
     }),
-    TypeOrmModule.forFeature([CandidateEntity, VoteEntity, VoterEntity, ElectionEntity])
+
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get('database.host'),
+        port: configService.get<number>('database.port'),
+        username: configService.get('databse.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [CandidateEntity, VoteEntity, VoterEntity, ElectionEntity],
+        synchronize: true,
+      }),
+    }),
+
+    TypeOrmModule.forFeature([CandidateEntity, VoteEntity, VoterEntity, ElectionEntity]),
+
+
+
   ],
-  controllers: [AppController, CandidateController, VoterController, VoteController, ElectionController],
-  providers: [AppService, VoterService, VoteService, CandidateService, ElectionService],
+  controllers: [CandidateController, VoterController, VoteController, ElectionController],
+  providers: [VoterService, VoteService, CandidateService, ElectionService],
 })
 export class AppModule { }
